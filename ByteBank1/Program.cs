@@ -1,10 +1,13 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 
-namespace ByteBank1 {
+namespace ByteBank1
+{
 
-    public class Program {
+    public class Program
+    {
 
-        static void ShowMenu() {
+        static void ShowMenu()
+        {
             Console.WriteLine("1 - Inserir novo usuário");
             Console.WriteLine("2 - Deletar um usuário");
             Console.WriteLine("3 - Listar todas as contas registradas");
@@ -16,6 +19,7 @@ namespace ByteBank1 {
         }
         static void ShowMenuManipularConta()
         {
+            Console.WriteLine("0 - Voltar ao menu principal");
             Console.WriteLine("1 - Depositar");
             Console.WriteLine("2 - Sacar");
             Console.WriteLine("3 - Extrato");
@@ -23,7 +27,8 @@ namespace ByteBank1 {
             Console.Write("Digite a opção desejada: ");
         }
 
-        static void RegistrarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas , List<double> saldos) {
+        static void RegistrarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos)
+        {
             Console.Write("Digite o cpf: ");
             cpfs.Add(Console.ReadLine());
             Console.Write("Digite o nome: ");
@@ -33,7 +38,8 @@ namespace ByteBank1 {
             saldos.Add(0);
         }
 
-        static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos) {
+        static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos)
+        {
             Console.Write("Digite o cpf: ");
             string cpfParaDeletar = Console.ReadLine();
             int indexParaDeletar = cpfs.FindIndex(cpf => cpf == cpfParaDeletar);
@@ -54,36 +60,42 @@ namespace ByteBank1 {
             }
         }
 
-        static void ListarTodasAsContas(List<string> cpfs, List<string> titulares, List<double> saldos) {
-            for(int i = 0; i < cpfs.Count; i++) {
+        static void ListarTodasAsContas(List<string> cpfs, List<string> titulares, List<double> saldos)
+        {
+            for (int i = 0; i < cpfs.Count; i++)
+            {
                 ApresentaConta(i, cpfs, titulares, saldos);
             }
         }
 
-        static void ApresentarUsuario(List<string> cpfs, List<string> titulares, List<double> saldos) {
+        static void ApresentarUsuario(List<string> cpfs, List<string> titulares, List<double> saldos)
+        {
             Console.Write("Digite o cpf: ");
             string cpfParaApresentar = Console.ReadLine();
             int indexParaApresentar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
-            if (indexParaApresentar == -1) {
+            if (indexParaApresentar == -1)
+            {
                 Console.WriteLine("Não foi possível apresentar esta Conta");
                 Console.WriteLine("MOTIVO: Conta não encontrada.");
             }
             else { ApresentaConta(indexParaApresentar, cpfs, titulares, saldos); }
-            
+
         }
 
-        static void ApresentarValorAcumulado(List<double> saldos) {
+        static void ApresentarValorAcumulado(List<double> saldos)
+        {
             Console.WriteLine($"Total acumulado no banco: {saldos.Sum()}");
             // saldos.Sum(); ou .Agregatte(0.0, (x, y) => x + y)
         }
 
-        static void ManipularConta(List<string> cpfs) {
+        static void ConsultarConta(List<string> cpfs, List<string> titulares, List<double> saldos)
+        {
             int option = 0, indexParaApresentar;
             do
             {
                 option = 0;
-                Console.Write("Digite o cpf: ");
+                Console.Write("Digite o CPF da conta: ");
                 string cpfParaApresentar = Console.ReadLine();
                 indexParaApresentar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
@@ -95,31 +107,30 @@ namespace ByteBank1 {
                     //Console.WriteLine("Deseja realizar uma nova consulta? ");
                     Console.WriteLine("Digite (1) para nova consulta ou qualquer numero para sair");
                     option = int.Parse(Console.ReadLine());
-                    
+
                 }
             } while (option == 1);
 
-            
-            if(indexParaApresentar != -1) {
-                do
-                {
-                    ShowMenuManipularConta();
-                    option = int.Parse(Console.ReadLine());
 
-                } while (option != 0);
+            if (indexParaApresentar != -1)
+            {
+                ManipularConta(indexParaApresentar, cpfs, titulares, saldos);
             }
-           
-            
+
+
+
 
 
 
         }
 
-        static void ApresentaConta( int index, List<string> cpfs, List<string> titulares, List<double> saldos) {
+        static void ApresentaConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
+        {
             Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
         }
 
-        public static void Main(string[] args) {
+        public static void Main(string[] args)
+        {
 
             Console.WriteLine("Antes de começar a usar, vamos configurar alguns valores: ");
 
@@ -130,13 +141,15 @@ namespace ByteBank1 {
 
             int option;
 
-            do {
+            do
+            {
                 ShowMenu();
                 option = int.Parse(Console.ReadLine());
+                Console.Clear();
+                //Console.WriteLine("-----------------");
 
-                Console.WriteLine("-----------------");
-
-                switch (option) {
+                switch (option)
+                {
                     case 0:
                         Console.WriteLine("Estou encerrando o programa...");
                         break;
@@ -156,18 +169,44 @@ namespace ByteBank1 {
                         ApresentarValorAcumulado(saldos);
                         break;
                     case 6:
-                        ManipularConta(cpfs);
+                        ConsultarConta(cpfs, titulares, saldos);
                         break;
                 }
 
                 Console.WriteLine("-----------------");
 
             } while (option != 0);
-            
-            
+
+
+
+        }
+
+        static void ManipularConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
+        {
+            int option = 0;
+
+            do
+            {
+                ShowMenuManipularConta();
+                option = int.Parse(Console.ReadLine());
+
+                switch (option)
+                {
+                    case 0:
+                        //Console.WriteLine("Voltar ao Menu Principal");
+                        Console.Clear();
+                        break;
+                    case 1:
+                        //($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        break;
+
+                }
+
+            } while (option != 0);
+
 
         }
 
     }
-
 }
