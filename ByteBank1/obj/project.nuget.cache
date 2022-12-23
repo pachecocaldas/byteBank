@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Fi0qTgX97NELmnqF9YmLOZh4lHPMCw8gXdcjb2tZxQyzunhn1fMMWJxlTPaKv/mTRxm8NvrQH8GUEkf9RP6RzQ==",
+  "dgSpecHash": "yzFZbnIv94f3nC8OvMKzgS/YDtNcN+bdkWHbR0UnLSGiAuu/l3MK40V0tkw4xBX+yGjw91syWlnwQQvLG0nO6w==",
   "success": true,
-  "projectFilePath": "C:\\Aulas\\Turmas\\ByteBank1\\ByteBank1\\ByteBank1.csproj",
+  "projectFilePath": "C:\\dev\\ByteBank\\ByteBank-SharpCoders\\ByteBank1\\ByteBank1.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
