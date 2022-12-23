@@ -79,28 +79,39 @@ namespace ByteBank1 {
         }
 
         static void ManipularConta(List<string> cpfs) {
-            String resposta = "n";
+            int option = 0, indexParaApresentar;
             do
             {
-                resposta = "n";
+                option = 0;
                 Console.Write("Digite o cpf: ");
                 string cpfParaApresentar = Console.ReadLine();
-                int indexParaApresentar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
+                indexParaApresentar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
                 if (indexParaApresentar == -1)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Conta não encontrada.");
                     Console.WriteLine("------------------------");
-                    Console.WriteLine("Deseja realizar uma nova consulta? ");
-                    Console.WriteLine("Digite (s)Sim para nova consulta ou qualquer tecla para ir para o menu princpal");
-                    resposta = Console.ReadLine();
-
+                    //Console.WriteLine("Deseja realizar uma nova consulta? ");
+                    Console.WriteLine("Digite (1) para nova consulta ou qualquer numero para sair");
+                    option = int.Parse(Console.ReadLine());
+                    
                 }
-            } while (resposta == "s");
+            } while (option == 1);
 
-            ShowMenuManipularConta();
-            int option = int.Parse(Console.ReadLine());
+            
+            if(indexParaApresentar != -1) {
+                do
+                {
+                    ShowMenuManipularConta();
+                    option = int.Parse(Console.ReadLine());
+
+                } while (option != 0);
+            }
+           
+            
+
+
 
         }
 
