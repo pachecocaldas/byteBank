@@ -22,7 +22,7 @@ namespace ByteBank1
             Console.WriteLine("0 - Voltar ao menu principal");
             Console.WriteLine("1 - Depositar");
             Console.WriteLine("2 - Sacar");
-            Console.WriteLine("3 - Extrato");
+            Console.WriteLine("3 - Saldo");
             Console.WriteLine("4 - Editar Nome");
             Console.Write("Digite a opção desejada: ");
         }
@@ -107,13 +107,16 @@ namespace ByteBank1
                     //Console.WriteLine("Deseja realizar uma nova consulta? ");
                     Console.WriteLine("Digite (1) para nova consulta ou qualquer numero para sair");
                     option = int.Parse(Console.ReadLine());
+                    Console.Clear();
 
                 }
             } while (option == 1);
 
 
             if (indexParaApresentar != -1)
-            {
+            {   
+                Console.WriteLine($"\n-------------------------------\nTitular : {titulares[indexParaApresentar]}");
+                Console.WriteLine("-------------------------------");
                 ManipularConta(indexParaApresentar, cpfs, titulares, saldos);
             }
 
@@ -173,7 +176,7 @@ namespace ByteBank1
                         break;
                 }
 
-                Console.WriteLine("-----------------");
+                Console.WriteLine("------------------------------------");
 
             } while (option != 0);
 
@@ -184,11 +187,13 @@ namespace ByteBank1
         static void ManipularConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
         {
             int option = 0;
+            Double valor = 0.0;
 
             do
             {
                 ShowMenuManipularConta();
                 option = int.Parse(Console.ReadLine());
+                Console.Clear();
 
                 switch (option)
                 {
@@ -197,8 +202,43 @@ namespace ByteBank1
                         Console.Clear();
                         break;
                     case 1:
-                        //($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
-                        Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        Console.WriteLine("Informe o valor para deposito");
+                        valor = double.Parse(Console.ReadLine());
+                        saldos[index] += valor;
+                        Console.WriteLine("---------------------------------------------");
+                        Console.WriteLine("Deposito realizado com sucesso!");
+                        Console.WriteLine($"Titular = {titulares[index]}");
+                        Console.WriteLine("-------------------------------------------\n\n");
+                        //Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        break;
+
+                    case 2:
+                        Console.WriteLine("Informe o valor do saque:");
+                        valor = double.Parse(Console.ReadLine());
+                        if (valor > saldos[index])
+                        {
+                            Console.WriteLine("------------------------------------");
+                            Console.WriteLine("Saldo insuficiente");
+                            Console.WriteLine("------------------------------------\n");
+                        }
+                        else { 
+                            saldos[index] -= valor;
+                            Console.WriteLine("------------------------------------");
+                            Console.WriteLine("Saque realizado com Sucesso!");
+                            Console.WriteLine("------------------------------------\n");
+                        }
+                        break;
+                    case 3:
+                        Console.WriteLine("--------------------------------------------");
+                        Console.WriteLine($"Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        Console.WriteLine("--------------------------------------------/n");
+                        break;
+                    case 4:
+                        Console.WriteLine("------------------------------------");
+                        Console.WriteLine("Infome o nome para ser atualizado");
+                        titulares[index] = Console.ReadLine();
+                        Console.WriteLine($"Nome atualizado para {titulares[index]}");
+                        Console.WriteLine("------------------------------------\n");
                         break;
 
                 }
