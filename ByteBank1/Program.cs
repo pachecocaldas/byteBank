@@ -1,4 +1,7 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Drawing;
+using System;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection;
 
 namespace ByteBank1
 {
@@ -8,6 +11,8 @@ namespace ByteBank1
 
         static void ShowMenu()
         {
+            //Console.Clear();
+            Console.WriteLine("\n\n  * Byte Bank *  \n   ");
             Console.WriteLine("1 - Inserir novo usuário");
             Console.WriteLine("2 - Deletar um usuário");
             Console.WriteLine("3 - Listar todas as contas registradas");
@@ -62,6 +67,7 @@ namespace ByteBank1
 
         static void ListarTodasAsContas(List<string> cpfs, List<string> titulares, List<double> saldos)
         {
+            Console.WriteLine("\n\n"  );
             for (int i = 0; i < cpfs.Count; i++)
             {
                 ApresentaConta(i, cpfs, titulares, saldos);
@@ -85,11 +91,11 @@ namespace ByteBank1
 
         static void ApresentarValorAcumulado(List<double> saldos)
         {
-            Console.WriteLine($"Total acumulado no banco: {saldos.Sum()}");
+            Console.WriteLine($"\n\nTotal acumulado no banco: {saldos.Sum()}");
             // saldos.Sum(); ou .Agregatte(0.0, (x, y) => x + y)
         }
 
-        static void ConsultarConta(List<string> cpfs, List<string> titulares, List<double> saldos)
+        static void ConsultarConta(List<string> cpfs, List<string> titulares, List<double> saldos, List<String> senhas )
         {
             int option = 0, indexParaApresentar;
             do
@@ -114,10 +120,40 @@ namespace ByteBank1
 
 
             if (indexParaApresentar != -1)
-            {   
-                Console.WriteLine($"\n-------------------------------\nTitular : {titulares[indexParaApresentar]}");
-                Console.WriteLine("-------------------------------");
-                ManipularConta(indexParaApresentar, cpfs, titulares, saldos);
+            {
+
+                int tentativas = 0;
+                Console.Write("Informe a senha: ");
+                do
+                {                    
+                    string senhaInformada = Console.ReadLine();
+                    if (senhaInformada == senhas[indexParaApresentar])
+                        tentativas = 4;
+                    else {
+                        Console.Clear();
+                        Console.WriteLine("***  Senha incorreta *****");
+                        Console.Write("Informe a senha: ");
+                        tentativas++;
+
+                    }
+                    
+
+                } while (tentativas < 3 );
+
+                if (tentativas == 3)
+                {
+                    Console.Clear();
+                    Console.WriteLine("\n\n********* Voce errou a senha 3 vezes ***********  ");
+                    Console.WriteLine("Pressione enter para voltar ao menu principal");
+                    Console.ReadLine();
+                    //ShowMenu();
+                }
+                else
+                {
+                    Console.WriteLine($"\n-------------------------------\nTitular : {titulares[indexParaApresentar]}");
+                    Console.WriteLine("-------------------------------");
+                    ManipularConta(indexParaApresentar, cpfs, titulares, saldos, senhas);
+                }
             }
 
 
@@ -129,14 +165,14 @@ namespace ByteBank1
 
         static void ApresentaConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
         {
-            Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+           Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2} | ");
+           Console.WriteLine($"------------------------------------------------------------------------");
         }
 
         public static void Main(string[] args)
         {
 
-            Console.WriteLine("Antes de começar a usar, vamos configurar alguns valores: ");
-
+            
             List<string> cpfs = new List<string>();
             List<string> titulares = new List<string>();
             List<string> senhas = new List<string>();
@@ -172,11 +208,11 @@ namespace ByteBank1
                         ApresentarValorAcumulado(saldos);
                         break;
                     case 6:
-                        ConsultarConta(cpfs, titulares, saldos);
+                        ConsultarConta(cpfs, titulares, saldos,senhas);
                         break;
                 }
 
-                Console.WriteLine("------------------------------------");
+               // Console.WriteLine("------------------------------------");
 
             } while (option != 0);
 
@@ -184,7 +220,51 @@ namespace ByteBank1
 
         }
 
-        static void ManipularConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
+        static void Depositar(int index, List<string> titulares, List<double> saldos) {
+            Console.WriteLine("Informe o valor para deposito");
+            Double valor = double.Parse(Console.ReadLine());
+            saldos[index] += valor;
+            Console.WriteLine("---------------------------------------------");
+            Console.WriteLine("Deposito realizado com sucesso!");
+            Console.WriteLine($"Titular = {titulares[index]}");
+            Console.WriteLine("-------------------------------------------\n\n");
+            //Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+
+        }
+
+        static void Sacar(int index, List<double> saldos) {
+            Console.WriteLine("Informe o valor do saque:");
+            Double valor = double.Parse(Console.ReadLine());
+            if (valor > saldos[index])
+            {
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine("Saldo insuficiente");
+                Console.WriteLine("------------------------------------\n");
+            }
+            else
+            {
+                saldos[index] -= valor;
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine("Saque realizado com Sucesso!");
+                Console.WriteLine("------------------------------------\n");
+            }
+        }
+
+        static void MostrarSaldo(int index, List<String> titulares, List<Double> saldos) {
+            Console.WriteLine("--------------------------------------------");
+            Console.WriteLine($"Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+            Console.WriteLine("--------------------------------------------\n");
+        }
+
+        static void EditarNome(int index, List<String> titulares) {
+            Console.WriteLine("------------------------------------");
+            Console.WriteLine("Infome o nome para ser atualizado");
+            titulares[index] = Console.ReadLine();
+            Console.WriteLine($"Nome atualizado para {titulares[index]}");
+            Console.WriteLine("------------------------------------\n");
+        }
+
+        static void ManipularConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos, List<String> senhas)
         {
             int option = 0;
             Double valor = 0.0;
@@ -202,43 +282,17 @@ namespace ByteBank1
                         Console.Clear();
                         break;
                     case 1:
-                        Console.WriteLine("Informe o valor para deposito");
-                        valor = double.Parse(Console.ReadLine());
-                        saldos[index] += valor;
-                        Console.WriteLine("---------------------------------------------");
-                        Console.WriteLine("Deposito realizado com sucesso!");
-                        Console.WriteLine($"Titular = {titulares[index]}");
-                        Console.WriteLine("-------------------------------------------\n\n");
-                        //Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
+                        Depositar(index, titulares, saldos);
                         break;
 
                     case 2:
-                        Console.WriteLine("Informe o valor do saque:");
-                        valor = double.Parse(Console.ReadLine());
-                        if (valor > saldos[index])
-                        {
-                            Console.WriteLine("------------------------------------");
-                            Console.WriteLine("Saldo insuficiente");
-                            Console.WriteLine("------------------------------------\n");
-                        }
-                        else { 
-                            saldos[index] -= valor;
-                            Console.WriteLine("------------------------------------");
-                            Console.WriteLine("Saque realizado com Sucesso!");
-                            Console.WriteLine("------------------------------------\n");
-                        }
+                        Sacar(index, saldos);
                         break;
                     case 3:
-                        Console.WriteLine("--------------------------------------------");
-                        Console.WriteLine($"Titular = {titulares[index]} | Saldo = R${saldos[index]:F2}");
-                        Console.WriteLine("--------------------------------------------\n");
+                        MostrarSaldo(index, titulares, saldos);                        
                         break;
                     case 4:
-                        Console.WriteLine("------------------------------------");
-                        Console.WriteLine("Infome o nome para ser atualizado");
-                        titulares[index] = Console.ReadLine();
-                        Console.WriteLine($"Nome atualizado para {titulares[index]}");
-                        Console.WriteLine("------------------------------------\n");
+                        EditarNome(index, titulares);
                         break;
 
                 }
