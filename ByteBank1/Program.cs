@@ -23,12 +23,13 @@ namespace ByteBank1
             Console.Write("Digite a opção desejada: ");
         }
         static void ShowMenuManipularConta()
-        {
-            Console.WriteLine("0 - Voltar ao menu principal");
+        {            
             Console.WriteLine("1 - Depositar");
             Console.WriteLine("2 - Sacar");
-            Console.WriteLine("3 - Saldo");
-            Console.WriteLine("4 - Editar Nome");
+            Console.WriteLine("3 - Realizar Transferencia");
+            Console.WriteLine("4 - Saldo");
+            Console.WriteLine("5 - Editar Nome");            
+            Console.WriteLine("0 - Para Fazer Logof");
             Console.Write("Digite a opção desejada: ");
         }
 
@@ -95,13 +96,13 @@ namespace ByteBank1
             // saldos.Sum(); ou .Agregatte(0.0, (x, y) => x + y)
         }
 
-        static void ConsultarConta(List<string> cpfs, List<string> titulares, List<double> saldos, List<String> senhas )
+        static int ConsultarConta(string pergunta, List<string> cpfs)
         {
             int option = 0, indexParaApresentar;
             do
             {
                 option = 0;
-                Console.Write("Digite o CPF da conta: ");
+                Console.Write(pergunta);
                 string cpfParaApresentar = Console.ReadLine();
                 indexParaApresentar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
@@ -117,28 +118,30 @@ namespace ByteBank1
 
                 }
             } while (option == 1);
+            return indexParaApresentar;
+        }
 
-
-            if (indexParaApresentar != -1)
-            {
+        static void ValidarSenha(int indexParaApresentar,List<string> cpfs, List<string> titulares, List<double> saldos, List<String> senhas)
+        {
 
                 int tentativas = 0;
                 Console.Write("Informe a senha: ");
                 do
-                {                    
+                {
                     string senhaInformada = Console.ReadLine();
                     if (senhaInformada == senhas[indexParaApresentar])
                         tentativas = 4;
-                    else {
+                    else
+                    {
                         Console.Clear();
                         Console.WriteLine("***  Senha incorreta *****");
                         Console.Write("Informe a senha: ");
                         tentativas++;
 
                     }
-                    
 
-                } while (tentativas < 3 );
+
+                } while (tentativas < 3);
 
                 if (tentativas == 3)
                 {
@@ -150,19 +153,15 @@ namespace ByteBank1
                 }
                 else
                 {
-                    Console.WriteLine($"\n-------------------------------\nTitular : {titulares[indexParaApresentar]}");
+                    Console.Clear();
+                    Console.WriteLine($"\n-------------------------------\nUsuario Logado : {titulares[indexParaApresentar]}");
                     Console.WriteLine("-------------------------------");
                     ManipularConta(indexParaApresentar, cpfs, titulares, saldos, senhas);
                 }
-            }
-
-
-
-
-
+            
 
         }
-
+           
         static void ApresentaConta(int index, List<string> cpfs, List<string> titulares, List<double> saldos)
         {
            Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = R${saldos[index]:F2} | ");
@@ -170,9 +169,7 @@ namespace ByteBank1
         }
 
         public static void Main(string[] args)
-        {
-
-            
+        {            
             List<string> cpfs = new List<string>();
             List<string> titulares = new List<string>();
             List<string> senhas = new List<string>();
@@ -208,15 +205,16 @@ namespace ByteBank1
                         ApresentarValorAcumulado(saldos);
                         break;
                     case 6:
-                        ConsultarConta(cpfs, titulares, saldos,senhas);
+                        int indexParaApresentar = ConsultarConta("\n* Area restrita para usuario autenticado *\n* Necessario realizar login *\n\nInforme o CPF: ",cpfs);
+                        if (indexParaApresentar != -1) {
+                            ValidarSenha(indexParaApresentar,cpfs, titulares, saldos, senhas);
+                        }
                         break;
                 }
 
                // Console.WriteLine("------------------------------------");
 
             } while (option != 0);
-
-
 
         }
 
@@ -247,6 +245,45 @@ namespace ByteBank1
                 Console.WriteLine("------------------------------------");
                 Console.WriteLine("Saque realizado com Sucesso!");
                 Console.WriteLine("------------------------------------\n");
+            }
+        }
+        static void Transferir(int index,int indexParaApresentar, List<string> titulares, List<string> cpfs, List<double> saldos)
+        {
+            
+
+            if (indexParaApresentar != -1)
+            {
+                Console.Write("Informe o valor do transferencia:");
+                Double valor = double.Parse(Console.ReadLine());
+                if (valor > saldos[index])
+                {
+                    Console.WriteLine("------------------------------------");
+                    Console.WriteLine("Saldo insuficiente");
+                    Console.WriteLine("------------------------------------\n");
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Dados da transferencia: \nTitular: {titulares[indexParaApresentar]}\nValor: R${valor:F2}");
+                    Console.WriteLine("Confirmar a tranferencia? (s)Sim (n)Não");
+                    String resposta = Console.ReadLine();
+                    if (resposta == "n")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Transferencia cancelada pelo usuario \n\n");
+                        return;
+                    }
+                    else
+                    {
+                        saldos[index] -= valor;
+                        saldos[indexParaApresentar] += valor;
+                        Console.Clear();
+                        Console.WriteLine("-------------------------------------------------");
+                        Console.WriteLine($"Transferencia realizada com sucesso!\nTitular = {titulares[indexParaApresentar]}\nValor de R${valor:F2}");
+                        Console.WriteLine("-------------------------------------------------\n");
+                    }
+                }
+               
             }
         }
 
@@ -289,11 +326,19 @@ namespace ByteBank1
                         Sacar(index, saldos);
                         break;
                     case 3:
-                        MostrarSaldo(index, titulares, saldos);                        
+                        int indexParaApresentar = ConsultarConta("Informe o CPF do Titular que recebera a transferencia: ", cpfs);
+                        if (indexParaApresentar != -1)
+                        {
+                            Transferir(index,indexParaApresentar, titulares, cpfs, saldos);
+                        }
                         break;
                     case 4:
+                        MostrarSaldo(index, titulares, saldos);                        
+                        break;
+                    case 5:
                         EditarNome(index, titulares);
                         break;
+                    
 
                 }
 
